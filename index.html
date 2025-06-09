@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LISTA DE TAREFAS</title>
+
+    <!-- Conexão com o arquivo CSS -->
+    <link rel="stylesheet" href="/CSS/estilos.css">
+
+    <!-- Conexão com o google fonts (para pegar icones)-->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+</head>
+
+<body>
+
+    <!-- Titulo da página -->
+    <h1>LISTA DE TAREFAS</h1>
+
+    <!-- Cabeçalho com input e botão para adicionar tarefas -->
+    <header>
+
+        <input id="inputTarefa_id" type="text" placeholder="Digite seu texto">
+
+        <!-- ao clicar no botão você ativa uma função chamada addTarefa() -->
+        <button onclick="addTarefa()" id="btn-add_id" class="add_cl">Adicionar</button>
+
+    </header>
+
+    <!-- Tag principal onde ficam todas as tarefas -->
+    <main id="areaLista_id">
+
+        <!-- MODELO INICIAL DE UMA TAREFA (DEPOIS QUE ESTÁ TUDO PRONTO ELE NÃO É MAIS PRECISO NO HTML, MAS É BOM DEIXA-LO AQUI PARA FINS DE REVISÃO) ⬇️ -->
+
+        <!-- DIV PRINCIPAL ONDE FICA SÓ UMA TAREFA -->
+       <!--  <div class="item_cl"> -->
+
+            <!-- DIV-FILHA ONDE FICA O ICONE DA BOLINHA NÃO PREENCHDA -->
+        <!-- <div class="itemIcone_cl"><span class="material-symbols-outlined"> radio_button_unchecked</span></div> -->
+
+           <!-- DIV-FILHA ONDE FICA O TEXTO ADICIONADO -->
+       <!--  <div class="itemNome_cl">Texto de exemplo</div> -->
+
+          <!-- DIV-FILHA ONDE FICA O ICONE DA LIXEIRA -->
+      <!--   <div class="itemBotao_cl"> <button class="delete_cl"> <span class="material-symbols-outlined">delete</span>
+        Deletar</button></div>
+
+        </div> -->
+
+
+        <!-- MODELO INICIAL DE UMA TAREFA "MARCADA" (DEPOIS QUE ESTÁ TUDO PRONTO ELE NÃO É MAIS PRECISO NO HTML TAMBÉM, MAS É BOM DEIXA-LO AQUI PARA FINS DE REVISÃO) ⬇️ -->
+
+        <!-- DIV PRINCIPAL ONDE FICA SÓ UMA TAREFA -->
+        <!-- <div class="item_cl clicado_cl"> -->
+
+            <!-- DIV-FILHA ONDE FICA O ICONE DA BOLINHA "PREENCHDA" -->
+        <!-- <div class="itemIcone_cl"><span class="material-symbols-outlined">check_circle</span></div> -->
+
+           <!-- DIV-FILHA ONDE FICA O TEXTO ADICIONADO -->
+        <!-- <div class="itemNome_cl">Texto de exemplo</div> -->
+
+          <!-- DIV-FILHA ONDE FICA O ICONE DA LIXEIRA -->
+       <!--  <div class="itemBotao_cl"> <button class="delete_cl"> <span class="material-symbols-outlined">delete</span>
+        Deletar</button></div>
+
+        </div> -->
+
+    </main>
+
+    <!-- Conexão com o arquivo JS -->
+    <script src="/JS/controle.js"></script>
+
+</body>
+
+</html>

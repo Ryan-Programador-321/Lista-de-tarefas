@@ -1,0 +1,135 @@
+/* Reset Global */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    /* Fonte geral do site */
+    font-family: cursive;
+
+    /* Fundo geral do site */
+    background-color: #92ffbc;
+}
+
+/* Titulo da página (CSS) */
+h1 {
+    text-align: center;
+    font-size: 3rem;
+    color: #ffffff;
+    text-shadow: 3px 5px 10px rgb(246, 255, 0);
+}
+
+/* Cabeçalho com input e botão para adicionar tarefas (CSS) */
+header {
+    display: flex;
+    flex-flow: row wrap;
+    width: 90%;
+    /* height: 50px; */
+    /* border: solid 1px red; */
+    margin: auto;
+    align-items: center;
+    padding-bottom: 30px;
+}
+
+input {
+    height: 120px;
+    font-size: 2rem;
+    width: 80%;
+    padding-left: 10%;
+    font-family: cursive;
+    /* border-right: none; */
+}
+
+button.add_cl {
+    height: 120px;
+    font-size: 1rem;
+    width: 20%;
+    cursor: pointer;
+    background-color: rgb(0, 151, 0);
+    color: #eeeeee;
+    font-weight: bold;
+    border: none;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    font-family: cursive;
+
+}
+
+/* Tag principal onde ficam todas as tarefas (CSS) */
+main {
+    flex-flow: row wrap;
+    width: 90%;
+    margin: auto;
+    /* border: solid 1px blue; */
+    padding-top: 40px;
+}
+
+/* DIV PRINCIPAL ONDE FICA SÓ UMA TAREFA (CSS) */
+.item_cl {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+    height: 80px;
+    width: 100%;
+    box-shadow: 4px 4px 4px rgb(51, 51, 51);
+    margin-bottom: 2%;
+    cursor: pointer;
+}
+
+/* Tarefa marcada */
+.item_cl.clicado_cl {
+    background-color: rgb(128, 255, 128);
+}
+
+.item_cl.clicado_cl .itemNome_cl {
+    text-decoration: line-through;
+    color: rgb(82, 82, 82);
+}
+
+/* DIV-FILHA ONDE FICA O ICONE DA BOLINHA NÃO PREENCHDA */
+.itemIcone_cl {
+    flex: 20%;
+    /*  border: 1px solid orangered; */
+    text-align: center;
+}
+
+
+.itemIcone_cl span {
+    flex: 20%;
+    /* border: 1px solid orangered; */
+    text-align: center;
+    font-size: 2rem;
+}
+
+/* DIV-FILHA ONDE FICA O TEXTO ADICIONADO */
+.itemNome_cl {
+    flex: 55%;
+    /*  border: 1px solid deeppink; */
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* DIV-FILHA ONDE FICA O ICONE DA LIXEIRA */
+.itemBotao_cl {
+    flex: 25%;
+}
+
+.itemBotao_cl .delete_cl {
+    background-color: rgb(241, 47, 47);
+    color: white;
+    border: none;
+    padding: 10px;
+    height: 80px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: cursive;
+}
+
+
