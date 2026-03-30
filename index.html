@@ -1,76 +1,503 @@
+<!--
+PROJETO: Lista de tarefas (To-Do List)
+
+FUNCIONAMENTO:
+- Permite adicionar novas tarefas
+- Permite marcar tarefas como concluídas
+- Permite deletar tarefas
+- Mantém as tarefas salvas mesmo após recarregar a página
+
+ESTADO:
+- contador (number)
+  → controla IDs únicos para cada tarefa
+
+- tarefasSalvas (array de objetos)
+  → cada tarefa possui:
+     {
+       id: number,
+       texto: string,
+       concluida: boolean
+     }
+
+PERSISTÊNCIA:
+- localStorage (chave: "tarefas")
+- dados salvos como JSON (string → array de objetos)
+
+FLUXO:
+
+1. Ao carregar a página:
+   - busca tarefas no localStorage
+   - converte de JSON para array (JSON.parse)
+   - recria cada tarefa na interface
+   - mantém estado (concluída ou não)
+
+2. Ao adicionar uma tarefa:
+   - pega o texto do input (removendo espaços com trim)
+   - cria elementos HTML dinamicamente
+   - adiciona na tela
+   - cria objeto da tarefa
+   - adiciona no array tarefasSalvas
+   - salva no localStorage
+
+3. Ao clicar em uma tarefa:
+   - alterna estado (concluída ↔ não concluída)
+   - atualiza estilo visual (classe "clicado")
+   - atualiza ícone
+   - atualiza localStorage
+
+4. Ao clicar no botão deletar:
+   - remove tarefa da interface
+   - remove do array (filter)
+   - atualiza localStorage
+
+5. Ao pressionar Enter:
+   - adiciona tarefa automaticamente
+
+FUNÇÕES PRINCIPAIS:
+
+- addTarefa():
+  → cria tarefa visual + objeto + salva
+
+- carregarTarefasSalvas():
+  → reconstrói tarefas a partir do localStorage
+
+- marcarTarefa():
+  → alterna estado de concluída
+
+- deletar():
+  → remove tarefa do sistema
+
+CONCEITOS IMPORTANTES:
+
+- createElement():
+  → criação dinâmica de elementos HTML
+
+- localStorage + JSON:
+  → persistência de dados
+
+- find():
+  → encontrar tarefa específica pelo ID
+
+- filter():
+  → remover tarefa do array
+
+- classList:
+  → controle visual (marcar/desmarcar tarefa)
+
+INTERFACE:
+- input para digitar tarefas
+- botão para adicionar
+- lista dinâmica de tarefas
+- cada item tem:
+   → ícone (status)
+   → texto
+   → botão de deletar
+ -->
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LISTA DE TAREFAS</title>
-
-    <!-- Conexão com o arquivo CSS -->
-    <link rel="stylesheet" href="CSS/estilos.css">
+    <title></title>
 
     <!-- Conexão com o google fonts (para pegar icones)-->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+        <style>
+            
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: cursive;
+            background: #2b2b2b;
+            color: #fff;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin: 40px 0;
+        }
+
+        header {
+            width: 80%;
+            margin: auto;
+            display: flex;
+        }
+
+        input {
+            height: 90px;
+            width: 80%;
+            font-size: 1.4rem;
+            padding-left: 10%;
+            font-family: inherit;
+            outline: none;
+            border: none;
+        }
+
+        input:focus{
+           border: 3px solid black;
+        }
+
+        button.add {
+            width: 20%;
+            height: 90px;
+            background: rgb(0, 151, 0);
+            border: none;
+            color: #eee;
+            cursor: pointer;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            font-family: inherit;
+            font-size: 5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button.add:hover{
+            background: rgb(212, 212, 8);
+            border: 3px solid black;
+        }
+
+
+        main {
+            width: 80%;
+            height: 60vh;
+            margin: auto;
+            margin-top: 1%;
+            overflow-y: auto;
+            background: rgb(28, 28, 28);
+            border: 3px solid black;
+            padding: 40px 0;
+        }
+
+        .item {
+            width: 90%;
+            background: #fff;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            margin: auto;
+            margin-bottom: 20px;
+            box-shadow: 4px 4px 4px rgb(51, 51, 51);
+            cursor: pointer;
+        }
+
+        .item.clicado {
+            background: rgb(128, 255, 128);
+        }
+
+        .item.clicado .nome {
+            text-decoration: line-through;
+            color: rgb(82, 82, 82);
+        }
+
+        .icone, .nome, .delete-area {
+            display: flex;
+            align-items: center;
+        }
+
+        .icone { flex: 20%; justify-content: center; color: black; font-size: 30px; }
+        .nome { flex: 55%; font-size: 20px; font-weight: bold; color: rgb(82, 82, 82);  }
+        .delete-area { flex: 25%; margin-left: 1px;}
+
+        .delete-btn {
+            width: 100%;
+            height: 80px;
+            border: none;
+            background: rgb(241, 47, 47);
+            color: white;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
 
 </head>
 
 <body>
 
-    <!-- Titulo da página -->
     <h1>LISTA DE TAREFAS</h1>
 
-    <!-- Cabeçalho com input e botão para adicionar tarefas -->
-    <header>
-
-        <input id="inputTarefa_id" type="text" placeholder="Digite seu texto">
-
-        <!-- ao clicar no botão você ativa uma função chamada addTarefa() -->
-        <button onclick="addTarefa()" id="btn-add_id" class="add_cl">Adicionar</button>
-
+    <header >
+        <input id="input" type="text" placeholder="Digite seu texto">
+        <button id="btnAdd" class="add">+</button>
     </header>
 
-    <!-- Tag principal onde ficam todas as tarefas -->
-    <main id="areaLista_id">
+    <main id="lista"></main>
 
-        <!-- MODELO INICIAL DE UMA TAREFA (DEPOIS QUE ESTÁ TUDO PRONTO ELE NÃO É MAIS PRECISO NO HTML, MAS É BOM DEIXA-LO AQUI PARA FINS DE REVISÃO) ⬇️ -->
+    <script>
 
-        <!-- DIV PRINCIPAL ONDE FICA SÓ UMA TAREFA -->
-       <!--  <div class="item_cl"> -->
+const $input = document.getElementById('input');
 
-            <!-- DIV-FILHA ONDE FICA O ICONE DA BOLINHA NÃO PREENCHDA -->
-        <!-- <div class="itemIcone_cl"><span class="material-symbols-outlined"> radio_button_unchecked</span></div> -->
+const $btnAdd = document.getElementById('btnAdd');
 
-           <!-- DIV-FILHA ONDE FICA O TEXTO ADICIONADO -->
-       <!--  <div class="itemNome_cl">Texto de exemplo</div> -->
-
-          <!-- DIV-FILHA ONDE FICA O ICONE DA LIXEIRA -->
-      <!--   <div class="itemBotao_cl"> <button class="delete_cl"> <span class="material-symbols-outlined">delete</span>
-        Deletar</button></div>
-
-        </div> -->
+const $lista = document.getElementById('lista');
 
 
-        <!-- MODELO INICIAL DE UMA TAREFA "MARCADA" (DEPOIS QUE ESTÁ TUDO PRONTO ELE NÃO É MAIS PRECISO NO HTML TAMBÉM, MAS É BOM DEIXA-LO AQUI PARA FINS DE REVISÃO) ⬇️ -->
+let contador = 0;
 
-        <!-- DIV PRINCIPAL ONDE FICA SÓ UMA TAREFA -->
-        <!-- <div class="item_cl clicado_cl"> -->
+//array que vai ser salvo como valor da chave do localstorage
+let tarefasSalvas = [];
 
-            <!-- DIV-FILHA ONDE FICA O ICONE DA BOLINHA "PREENCHDA" -->
-        <!-- <div class="itemIcone_cl"><span class="material-symbols-outlined">check_circle</span></div> -->
 
-           <!-- DIV-FILHA ONDE FICA O TEXTO ADICIONADO -->
-        <!-- <div class="itemNome_cl">Texto de exemplo</div> -->
+function addTarefa() {
 
-          <!-- DIV-FILHA ONDE FICA O ICONE DA LIXEIRA -->
-       <!--  <div class="itemBotao_cl"> <button class="delete_cl"> <span class="material-symbols-outlined">delete</span>
-        Deletar</button></div>
+    let texto = $input.value.trim();
+    //trim() tira espaços do inicio e do fim do texto deixando apenas o que está no meio.
+    //"   ryan   "  =  "ryan"
 
-        </div> -->
 
-    </main>
+    if (texto == "") return;
 
-    <!-- Conexão com o arquivo JS -->
-    <script src="JS/controle.js"></script>
+        contador++
+
+        //conteiner principal
+        const tarefa = document.createElement('div');
+        tarefa.classList.add('item');
+        tarefa.id = contador;
+
+        //icone de marcação
+        const icone = document.createElement('div');
+        icone.classList.add('icone');
+        
+        const spanIcone = document.createElement('span');
+        spanIcone.classList.add('material-symbols-outlined');
+        spanIcone.innerHTML = 'radio_button_unchecked';
+
+        icone.appendChild(spanIcone);
+
+        //texto
+        const conteinerTexto = document.createElement('div');
+        conteinerTexto.classList.add('nome');
+        conteinerTexto.innerText = texto;
+
+        //botão de deletar
+        const areaBotao = document.createElement('div');
+        areaBotao.classList.add('delete-area');
+
+        const botao = document.createElement('button');
+        botao.classList.add('delete-btn');
+        botao.innerHTML = `<span class="material-symbols-outlined">delete</span> Deletar`;
+
+        areaBotao.appendChild(botao);
+
+        //detalhes finais da função
+        tarefa.appendChild(icone);
+        tarefa.appendChild(conteinerTexto);
+        tarefa.appendChild(areaBotao);
+
+        $lista.appendChild(tarefa);
+
+
+
+        //salvando informações da tarefa no localstorage
+
+        //objeto que vai ser localizado pelo índice do array
+        const novaTarefaSalva = {
+
+            id: contador,
+            texto: texto,
+            concluida: false
+        }
+
+        //coloca o objeto no array
+        tarefasSalvas.push(novaTarefaSalva);
+
+
+        //crio uma chave no local storage pra deixar as tarefas salvas
+        localStorage.setItem('tarefas', JSON.stringify(tarefasSalvas));
+
+        
+
+        tarefa.addEventListener('click', (event) => {
+
+            if(event.target.closest('.delete-btn')) return;
+
+            marcarTarefa(tarefa, spanIcone);
+        });
+
+        botao.addEventListener('click', () => deletar(tarefa));
+
+        $input.value = "";
+
+        $input.focus();
+   
+    }
+
+
+
+
+
+function carregarTarefasSalvas(){
+
+    //Tranformo o string de volta no seu tipo original e guardo a array numa variável
+    let salvo = JSON.parse(localStorage.getItem('tarefas'));
+
+    if (!salvo) return;
+
+    tarefasSalvas = salvo;
+
+    salvo.forEach( objeto => {
+
+        //deixa o contador atualizado quando for criar uma nova tarefa
+        if(objeto.id > contador){ contador = objeto.id};
+
+        //conteiner principal
+        const tarefa = document.createElement('div');
+        tarefa.classList.add('item');
+        tarefa.id = objeto.id;
+
+        //icone de marcação
+        const icone = document.createElement('div');
+        icone.classList.add('icone');
+        
+        const spanIcone = document.createElement('span');
+        spanIcone.classList.add('material-symbols-outlined');
+
+        spanIcone.innerHTML = objeto.concluida ? 'check_circle':'radio_button_unchecked';
+
+        if(objeto.concluida){
+
+            tarefa.classList.add('clicado');
+            spanIcone.style.backgroundColor = ''; 
+            spanIcone.style.color = 'black';
+        }
+
+        icone.appendChild(spanIcone);
+
+
+        //texto
+        const conteinerTexto = document.createElement('div');
+        conteinerTexto.classList.add('nome');
+        conteinerTexto.innerText = objeto.texto;
+
+        //botão de deletar
+        const areaBotao = document.createElement('div');
+        areaBotao.classList.add('delete-area');
+
+        const botao = document.createElement('button');
+        botao.classList.add('delete-btn');
+        botao.innerHTML = `<span class="material-symbols-outlined">delete</span> Deletar`;
+
+        areaBotao.appendChild(botao);
+
+        //detalhes finais da função
+        tarefa.appendChild(icone);
+        tarefa.appendChild(conteinerTexto);
+        tarefa.appendChild(areaBotao);
+
+        $lista.appendChild(tarefa);
+
+        
+
+        tarefa.addEventListener('click', (event) => {
+
+            if(event.target.closest('.delete-btn')) return;
+
+            marcarTarefa(tarefa, spanIcone);
+        });
+
+        botao.addEventListener('click', () => deletar(tarefa));
+
+        $input.value = "";
+
+        $input.focus();
+
+    })
+    
+
+}
+
+
+
+
+
+function marcarTarefa(tarefa, spanIcone ) {
+
+        //pega o id da tarefa
+        let id = Number(tarefa.id);
+
+        //percorre cada indice ou valor (que é um objeto) 't' da array tentando encontrar um objeto com a chave 'id' igual a variável id e cria uma nova array associada a variável obj.
+        const obj = tarefasSalvas.find( objeto => objeto.id === id);
+
+        //recebe o valor contrário do que estava antes, se era false, vira true, se era true, vira false.
+        obj.concluida = !obj.concluida;
+
+
+        if (tarefa.classList.contains('clicado')) {
+        
+        tarefa.classList.remove('clicado');
+
+        spanIcone.innerText = 'radio_button_unchecked';
+
+        spanIcone.style.backgroundColor = '';
+
+
+ 
+        } else {
+         
+        tarefa.classList.add('clicado');
+
+        spanIcone.innerText = 'check_circle';
+
+        spanIcone.style.backgroundColor = ''; 
+        spanIcone.style.color = 'black';
+       
+        $lista.appendChild(tarefa);
+
+    }
+
+    localStorage.setItem('tarefas', JSON.stringify(tarefasSalvas));
+};
+
+
+
+
+
+function deletar(tarefa) {
+
+    //pega o id da tarefa
+        let id = Number(tarefa.id);
+
+        //percorre cada indice ou valor (que é um objeto) 't' da array tentando encontrar os objeto com a chave 'id' diferente da variável id e cria uma nova array sem o objeto que contem aquele id específico.
+        tarefasSalvas = tarefasSalvas.filter( t => { return t.id !== id});
+
+        localStorage.setItem('tarefas', JSON.stringify(tarefasSalvas));
+
+    tarefa.remove();
+}
+
+
+
+
+
+$input.addEventListener('keyup', (event) => {
+
+    if (event.key === 'Enter') {
+
+       addTarefa();
+
+    }
+})
+
+
+
+
+
+$btnAdd.addEventListener('click', () => addTarefa());
+
+
+
+
+
+carregarTarefasSalvas();
+    </script>
 
 </body>
 
